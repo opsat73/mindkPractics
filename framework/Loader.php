@@ -48,7 +48,7 @@ class Loader
         for ($i = 1; $i < $count; $i++) {
             $classPath = $classPath.'/'.$fragments[$i];
         }
-        $classPath = $classPath.'.'.php;
+        $classPath = $classPath.'.php';
         require_once($classPath);
     }
 }

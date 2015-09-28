@@ -35,6 +35,9 @@ class Router
             $controller = new $controller();
             if (method_exists($controller, $action))
                 $controller->$action();
+            /**
+             * todo add parameters
+             */
         }
     }
 
