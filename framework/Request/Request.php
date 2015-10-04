@@ -21,7 +21,7 @@ class Request
         $this->requestMethod = $_SERVER["REQUEST_METHOD"];
         $this->params = $_REQUEST;
         $this->url = $_SERVER['HTTP_HOST'];
-        $this->urn = $_SERVER['PHP_SELF'];
+        $this->urn = $_SERVER['REQUEST_URI'];
         $this->uri = $this->url.$this->urn;
     }
 

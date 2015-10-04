@@ -22,18 +22,18 @@ class Service
     private function __construct() {
         $this->register("request", "framework\\Request\\Request", true);
     }
-    private $services = array();
+    private static $services = array();
 
-    public function register($key, $service, $needConstruct) {
-        $this->services[$key] = new ServiceInstance($service, $needConstruct);
+    public static function register($key, $service, $needConstruct) {
+        self::$services[$key] = new ServiceInstance($service, $needConstruct);
     }
 
-    public function hasService($key) {
-        return ($this->services[$key] != null);
+    public static function hasService($key) {
+        return (self::$services[$key] != null);
     }
 
-    public function getService($key) {
-        return $this->services[$key]->getService();
+    public static function get($key) {
+        return self::$services[$key]->getService();
     }
 }
 

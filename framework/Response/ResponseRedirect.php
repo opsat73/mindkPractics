@@ -10,7 +10,6 @@ namespace Framework\Response;
 
 use Framework\Response\AbstractResponse;
 
-
 class ResponseRedirect extends AbstractResponse
 {
     private $redirectURL;

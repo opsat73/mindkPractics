@@ -11,6 +11,10 @@ namespace Framework\Router;
 class Router
 {
     private $routes;
+    private $controller;
+    private $action;
+    private $arguments = array();
+    private $routeParams;
 
     public function __construct($routes){
         $this->routes = $routes;
@@ -19,26 +23,37 @@ class Router
     public function routePath($path) {
         $controller = null;
         $action = null;
+        $rez = array();
 
-        foreach ( $this->routes as $rout){
+        foreach ( $this->routes as $key => $rout){
             $pattern = $this->getRegexpByRout($rout);
             preg_match($pattern, $path,$rez);
-            if ($path == $rez[0]) {
+            if ((!empty($rez))&&($path == $rez[0])) {
                 $controller = '\\'.$rout['controller'];
                 $action = $rout['action'];
                 $action = $action.'Action';
+                $this->routeParams['_name'] = $key;
+
                 break;
             }
         }
 
-        if (class_exists($controller)) {
-            $controller = new $controller();
-            if (method_exists($controller, $action))
-                $controller->$action();
-            /**
-             * todo add parameters
-             */
+        $argsArray = array();
+
+        foreach($rez as $key=>$value) {
+            if ($key != 0) {
+                $argsArray[$key] = $value;
+            }
         }
+
+            $this->controller = $controller;
+            $this->action = $action;
+            $this->arguments = $argsArray;
+
+
+        /**
+         * todo need more args
+         */
     }
 
     private function getRegexpByRout($rout) {
@@ -51,12 +66,32 @@ class Router
         for ($i = 0; $i < $placeholdersCount; $i++) {
             $changeTo = $rout['_requirements'][$placeholders[1][$i]];
             $change = $placeholders[0][$i];
-            $pattern = preg_replace('/'.$change.'/', $changeTo, $pattern);
+            $pattern = preg_replace('/'.$change.'/', '('.$changeTo.')', $pattern);
         }
         return '/'.$pattern.'/';
     }
 
-    /**
-     * todo generateRoute
-     */
+    public function getController() {
+        return $this->controller;
+    }
+
+    public function getAction() {
+       return $this->action;
+    }
+
+    public function getArgumetns() {
+        return $this->arguments;
+    }
+
+    public function getRouteParams() {
+        return $this->routeParams;
+    }
+
+    public function getRoute($route) {
+        $rout_params = $this->routes[$route];
+        return $rout_params['pattern'];
+        /**
+         * todo now without parameters
+         */
+    }
 }

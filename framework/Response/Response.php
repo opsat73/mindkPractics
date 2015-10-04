@@ -8,13 +8,16 @@
 
 namespace Framework\Response;
 
-use Framework\Response\AbstractResponse;
-
 class Response extends AbstractResponse
 {
-    public function __construct($content) {
+    public function __construct($content=null) {
         parent::__construct();
         $this->setResponseCode(200);
         $this->setContent($content);
+    }
+
+    public function __toString() {
+        $result = $this->getContent();
+        return $result.'';
     }
 }

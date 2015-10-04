@@ -10,13 +10,12 @@ namespace Framework\Response;
 
 class AbstractResponse
 {
-    private $responseCode;
-    private $headers;
-    private $statusCode;
-    private $responseStatus;
-    private $content;
-    private $cooks;
-    private $protocolVersion;
+    private $responseCode = null;
+    private $headers = array();
+    private $statusCode = null;
+    private $responseStatus = null;
+    private $content = null;
+    private $protocolVersion = null;
 
     public function __construct() {
         $this->protocolVersion = 'html 1.1';
@@ -26,7 +25,7 @@ class AbstractResponse
         $this->responseCode = $code;
     }
 
-    public function getResponseCode($code) {
+    public function getResponseCode() {
         return $this->responseCode;
     }
 
@@ -48,7 +47,7 @@ class AbstractResponse
         /**
          * todo utochnit
          */
-        $this->headers[] = $header;
+        array_push($this->headers,  $header);
     }
 
     public function setContent($content) {
@@ -66,8 +65,8 @@ class AbstractResponse
 
     public function sendHeaders() {
         $this->sendStatus();
-        foreach ($this->headers as $head) {
-            header($this->headers[$head],true, $this->statusCode);
+        foreach ($this->headers as $key =>$head) {
+            header($head,true, $this->statusCode);
         }
     }
 
