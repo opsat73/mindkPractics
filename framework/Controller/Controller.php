@@ -13,6 +13,7 @@ use Framework\DI\Service;
 use Framework\Renderer\Renderer;
 use Framework\Response\Response;
 use Framework\Response\ResponseRedirect;
+use Framework\Session\SessionManager;
 
 class Controller
 {
@@ -44,7 +45,11 @@ class Controller
         return $router->getRoute($rout);
     }
 
-    public function redirect($redirectTo) {
+    public function redirect($redirectTo, $message = null) {
+        if ($message != null) {
+            $session = Service::get('session');
+            $session ->addMessage($message);
+        }
         return new ResponseRedirect($redirectTo);
     }
 

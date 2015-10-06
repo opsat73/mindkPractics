@@ -11,6 +11,7 @@ namespace Framework\Security;
 
 use Blog\Model\User;
 use Framework\DI\Service;
+use Framework\Request\Request;
 
 class Security
 {
@@ -46,6 +47,30 @@ class Security
             $user->email = $session->getParameter('userName');
             return $user;
         }
+    }
+
+    public function generateToken() {
+        $session = Service::get('session');
+        $token = md5(mktime());
+        $session -> putParameter('token', $token);
+        return $token;
+    }
+
+    public function isTokenCorrect() {
+        $request = Service::get('request');
+        $token = null;
+        if ($request->parameterExist('token')) {
+            $token = $request->get('token');
+        }
+
+        if ($token != null) {
+            $tokenFromSession = Service::get('session')->getParameter('token');
+            return $tokenFromSession == $token? true: false;
+        } else {
+            return true;
+        }
+
+
     }
 
 

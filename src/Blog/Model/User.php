@@ -27,4 +27,8 @@ class User extends ActiveRecord implements UserInterface
     {
         return $this->role;
     }
+
+    public static function findByEmail($email) {
+        return self::findByField('email', $email, true);
+    }
 }

@@ -22,12 +22,20 @@ class Renderer
         };
 
         $getRouteFunc = function($rout) {
+
             $router = Service::get('router');
             return $router->getRoute($rout);
         };
 
+        $generateToken = function() {
+            $key = Service::get('security')->generateToken();
+            $outputString = '<input type = "hidden" name = "token" value = "'.$key.'">';
+            echo $outputString;
+        };
+
         $params['include'] = $includeFunc;
         $params['getRoute'] = $getRouteFunc;
+        $params['generateToken'] = $generateToken;
 
         ob_start();
         extract($params);

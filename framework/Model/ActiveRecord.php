@@ -87,9 +87,11 @@ abstract class ActiveRecord
             }
             $records[$recordsCount++] = $object;
         }
-        if ($needFirstOnly)
-            $records = $records[0];
-        return $records;
+        if (array_key_exists(0, $records)) {
+            if ($needFirstOnly)
+                $records = $records[0];
+            return $records;
+        }
     }
 
     public function delete() {

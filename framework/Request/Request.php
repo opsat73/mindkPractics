@@ -46,15 +46,12 @@ class Request
             $rawValue = $this->params[$parameterName];
             return $this->filterValue($rawValue);
         } else {
-            /**
-             * todo maybe throw exception or default value using mapping
-             */
             return null;
         }
     }
 
     public function filterValue($value) {
-        return preg_replace('/\s/', '', $value);
+        return preg_replace('/[\n\r\t]/', '', $value);
     }
 
     public function parameterExist($parameterName) {
