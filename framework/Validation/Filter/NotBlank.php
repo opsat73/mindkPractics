@@ -12,6 +12,11 @@ namespace Framework\Validation\Filter;
 class NotBlank implements IFIlter
 {
 
+    /**
+     * validate field for empty value or string with no chars
+     * @param name $field field for validating
+     * @return bool valitation result
+     */
     public function validateField($field) {
     if (($field == null) || (strlen($field) == 0))
     {

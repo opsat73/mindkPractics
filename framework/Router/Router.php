@@ -16,10 +16,18 @@ class Router
     private $arguments = array();
     private $routeParams;
 
+    /**
+     * construct object for routing
+     * @param $routes array with mapping of routes
+     */
     public function __construct($routes){
         $this->routes = $routes;
     }
 
+    /**
+     * method parse path and parse controller name, action and arguments according routing mapping
+     * @param $path urn address for parsing
+     */
     public function routePath($path) {
         $controller = null;
         $action = null;
@@ -49,11 +57,6 @@ class Router
             $this->controller = $controller;
             $this->action = $action;
             $this->arguments = $argsArray;
-
-
-        /**
-         * todo need more args
-         */
     }
 
     private function getRegexpByRout($rout) {
@@ -71,27 +74,50 @@ class Router
         return '/'.$pattern.'/';
     }
 
+    /**
+     * return name of controller
+     * routePath() need be executed before
+     * @return mixed controlle name
+     */
     public function getController() {
         return $this->controller;
     }
 
+    /**
+     * return name of action
+     * routePath() need be executed before
+     * @return mixed action name
+     */
     public function getAction() {
        return $this->action;
     }
 
+    /**
+     * return arguments
+     * routePath() need be executed before
+     * @return array arguments for action
+     */
     public function getArgumetns() {
         return $this->arguments;
     }
 
+    /**
+     * return array with parameters of parsed rout
+     * keys:
+     * _name = name of rout from mapping
+     * @return mixed array with parameters
+     */
     public function getRouteParams() {
         return $this->routeParams;
     }
 
+    /**
+     * method construct route using mapping
+     * @param $route name of route
+     * @return mixed return route by key according route mapping
+     */
     public function getRoute($route) {
         $rout_params = $this->routes[$route];
         return $rout_params['pattern'];
-        /**
-         * todo now without parameters
-         */
     }
 }

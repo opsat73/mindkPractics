@@ -11,6 +11,7 @@ namespace Framework\Security;
 
 use Blog\Model\User;
 use Framework\DI\Service;
+use Framework\Exception\SecurityException;
 use Framework\Request\Request;
 
 class Security
@@ -21,24 +22,39 @@ class Security
         $session->putParameter('isAuthenticated', false, false);
     }
 
+    /**
+     * clear security parameters
+     */
     public function clear() {
         $session = Service::get('session');
         $session->putParameter('isAuthenticated', false);
         $session->removeParameter('userName');
     }
 
+    /**
+     * check if user authenticated
+     * @return mixed true if user authenticated
+     */
     public function isAuthenticated() {
         $session = Service::get('session');
         return $session->getParameter('isAuthenticated');
 
     }
 
+    /**
+     * authenticate in session
+     * @param $user user for logining
+     */
     public function setUser($user) {
         $session = Service::get('session');
         $session -> putParameter('userName', $user->email);
         $session -> putParameter('isAuthenticated', true);
     }
 
+    /**
+     * return authenticated user from session
+     * @return User user from session
+     */
     public function getUser()
     {
         $session = Service::get('session');
@@ -49,6 +65,10 @@ class Security
         }
     }
 
+    /**
+     * generate random token using MD5 algorytm
+     * @return string token which was generated and setted in session
+     */
     public function generateToken() {
         $session = Service::get('session');
         $token = md5(mktime());
@@ -56,6 +76,10 @@ class Security
         return $token;
     }
 
+    /**
+     * check token
+     * @return bool return true if token correct
+     */
     public function isTokenCorrect() {
         $request = Service::get('request');
         $token = null;
@@ -69,8 +93,14 @@ class Security
         } else {
             return true;
         }
+    }
 
-
+    /**
+     * check token and throw SecurityException if token is incorrect
+     */
+    public function checkToken () {
+        if (!$this->isTokenCorrect())
+            throw new SecurityException('token is incorrect');
     }
 
 

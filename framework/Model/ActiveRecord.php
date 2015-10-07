@@ -13,10 +13,26 @@ use Framework\DI\Service;
 
 abstract class ActiveRecord
 {
+    /**
+     * @var default key field
+     */
     public $id;
 
+    /**
+     * @return mixed name of table
+     */
     public abstract static function getTable();
 
+    /**
+     * @return string return name of key field
+     */
+    public static function getKeyField() {
+        return 'id';
+    }
+
+    /**
+     * save record in Data Base
+     */
     public function save() {
         $needToSave = $this->getFieldValues();
         $columnQueue = "";
@@ -34,6 +50,9 @@ abstract class ActiveRecord
         Service::get('db')->commit();
     }
 
+    /**
+     * @return array array with names of fields in record
+     */
     protected function getFieldNames() {
         $reflect = new \ReflectionClass($this);
         $fields = $reflect->getProperties();
@@ -45,6 +64,9 @@ abstract class ActiveRecord
         return $fieldsName;
     }
 
+    /**
+     * @return array return array with values of field
+     */
     protected function getFieldValues() {
         $reflect = new \ReflectionClass($this);
         $fields = $reflect ->getProperties();
@@ -55,18 +77,29 @@ abstract class ActiveRecord
         return $values;
     }
 
+    /**
+     * @param $parameter 'all' if need find all records in table and key value if need to find record by key field
+     * @return array if need find all record or one record if use finding by key field
+     */
     public static function find($parameter) {
         if ($parameter === 'all') {
             return self::findByField(null, null, null);
         } else {
-            return self::findByField('id', $parameter, true);
+            return self::findByField(static::getKeyField(), $parameter, true);
         }
     }
 
+    /**
+     * method use fo find record by field
+     * @param $fieldName field name which use for finding. if null use key field
+     * @param $keyValue value for finding
+     * @param bool|false $needFirstOnly if ture, return one record, if false, return array with records
+     * @return array result of finding with record if one and array of record needFirsOnly = false
+     */
     public static function findByField($fieldName, $keyValue, $needFirstOnly = false) {
         $condition = null;
         if ($fieldName === null) {
-            $condition = "where id = ? limit 1";
+            $condition = "where ".self::getKeyField()." = ? limit 1";
         } else {
             $condition = "where " . $fieldName . " = ?";
             if ($needFirstOnly)
@@ -94,6 +127,9 @@ abstract class ActiveRecord
         }
     }
 
+    /**
+     * delete recod from data base
+     */
     public function delete() {
         $statement = Service::get('db')->prepare("delete from ".static::getTable()." where id = ?");
         $key = $this->getFieldValues();
@@ -102,7 +138,9 @@ abstract class ActiveRecord
             $statement->execute(array($key));
         }
     }
-
+    /**
+     * @return rules for validating field
+     */
     public function getRules() {
         return null;
     }

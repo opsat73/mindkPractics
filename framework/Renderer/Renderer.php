@@ -13,6 +13,11 @@ use Framework\DI\Service;
 
 class Renderer
 {
+    /**
+     * @param $templateFile path to template file
+     * @param $params array with arguments which used in template file
+     * @return content
+     */
     public function render($templateFile, $params) {
         $includeFunc = function ($controller, $action, $args = array()) {
             $controllerInstance = new $controller();

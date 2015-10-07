@@ -14,6 +14,10 @@ class ResponseRedirect extends AbstractResponse
 {
     private $redirectURL;
 
+    /**
+     * construcn redirect response whith setted Location in header and response code 301 for defauls
+     * @param $redirectURL URL for redirectiong
+     */
     public function __construct($redirectURL)
     {
         parent::__construct();
@@ -23,15 +27,19 @@ class ResponseRedirect extends AbstractResponse
         $this->addHeader('Location: '.$this->redirectURL, true, $this->getResponseCode());
     }
 
+    /**
+     * send redirect response
+     */
     public function send() {
         $this->sendHeaders();
     }
 
-    private function setRedirectCode($code = 302) {
+    /**
+     * method for setting response code
+     * @param int $code code of response. 301 as defaulst
+     */
+    public function setRedirectCode($code = 301) {
         $this->setResponseCode($code);
-        /**
-         * todo need to refactor because this is DRAFT version;
-         */
     }
 }
 ?>

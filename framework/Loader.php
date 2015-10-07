@@ -23,8 +23,6 @@ class Loader
      * key = 'Foo\\'
      * directory = '\\var\\Foo'
      *
-     * 
-     *
      * @param $key root directory for classes
      * @param $nameSpace path to directory
      */
