@@ -18,7 +18,6 @@ class Security
 {
     public function __construct() {
         $session = Service::get('session');
-        $session -> startSession();
         $session->putParameter('isAuthenticated', false, false);
     }
 

@@ -18,9 +18,9 @@ $getErrorBody = function ($field) use ($errors){
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title"><?php if (isset($post->id)) {
-                echo 'Edit Post';
+                echo _('Edit Post');
             } else {
-                echo 'Add New Post';
+                echo _('Add New Post');
             } ?></h3>
     </div>
     <div class="panel-body">
@@ -29,7 +29,7 @@ $getErrorBody = function ($field) use ($errors){
             <div class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span
                         class="sr-only">Close</span></button>
-                <strong>Error!</strong> <?php echo $error ?>
+                <strong><?php echo _("Error!")?></strong> <?php echo $error ?>
             </div>
         <?php } ?>
 
@@ -38,7 +38,7 @@ $getErrorBody = function ($field) use ($errors){
                 <label class="col-sm-2 control-label">Title</label>
 
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="title" placeholder="Title" value="<?php echo @$post->title ?>">
+                    <input type="text" class="form-control" name="title" placeholder="<?php echo _("Title")?>" value="<?php echo @$post->title ?>">
                     <?php echo $getErrorBody('title')?>
                 </div>
             </div>
@@ -88,7 +88,7 @@ $getErrorBody = function ($field) use ($errors){
 
                             <div class="dropdown-menu input-append">
                                 <input class="span2" placeholder="URL" type="text" data-edit="createLink"/>
-                                <button class="btn" type="button">Add</button>
+                                <button class="btn" type="button"><?php echo _("Add")?></button>
                             </div>
                             <a class="btn" data-edit="unlink" title="Remove Hyperlink"><i class="icon-cut"></i></a>
 
@@ -113,7 +113,7 @@ $getErrorBody = function ($field) use ($errors){
             <?php $generateToken() ?>
 
             <div class="btn-group pull-right">
-                <button type="submit" class="btn btn-success mr-5">Save</button>
+                <button type="submit" class="btn btn-success mr-5"><?php echo _("Save")?></button>
                 <a href="/" class="btn btn-danger">Cancel</a>
             </div>
         </form>
