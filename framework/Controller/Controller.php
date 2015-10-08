@@ -13,6 +13,7 @@ use Framework\DI\Service;
 use Framework\Renderer\Renderer;
 use Framework\Response\Response;
 use Framework\Response\ResponseRedirect;
+use Framework\Security\Security;
 use Framework\Session\SessionManager;
 
 class Controller
@@ -23,9 +24,14 @@ class Controller
      * @param $controller controller name
      * @param $action action name
      * @param array $args arguments for action
-     * @return mixed Response or Redirect Response
+     * @return mixed Response or Redirect Response,
      */
-    public static function executeAction($controller, $action, $args = array()) {
+    public static function executeAction($controller, $action, $args = array(), $grants) {
+        if ($grants != null) {
+            $security = new Security();
+            $security->checkGrants($grants);
+        }
+
         $controllerInstance = new $controller();
         if ($args === null)
             $args = array();
@@ -43,7 +49,6 @@ class Controller
         $callerNameSpaces = \explode('\\', $callerClassName);
         $templateFolder = __DIR__.'/../../src/Blog/views/'.str_replace("Controller", '', \end($callerNameSpaces));
         $templateFile = $templateFolder.'/'.$template.'.php';
-
         $renderer = new Renderer();
         $resp = new Response($renderer->render($templateFile, $params));
         return $resp;

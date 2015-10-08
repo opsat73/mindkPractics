@@ -12,7 +12,7 @@ namespace Framework\Security;
 use Blog\Model\User;
 use Framework\DI\Service;
 use Framework\Exception\SecurityException;
-use Framework\Request\Request;
+use Framework\Exception\AccessDenyException;
 
 class Security
 {
@@ -28,6 +28,7 @@ class Security
         $session = Service::get('session');
         $session->putParameter('isAuthenticated', false);
         $session->removeParameter('userName');
+        $session->removeParameter('userRole');
     }
 
     /**
@@ -47,6 +48,7 @@ class Security
     public function setUser($user) {
         $session = Service::get('session');
         $session -> putParameter('userName', $user->email);
+        $session -> putParameter('userRole', $user->getRole());
         $session -> putParameter('isAuthenticated', true);
     }
 
@@ -100,6 +102,16 @@ class Security
     public function checkToken () {
         if (!$this->isTokenCorrect())
             throw new SecurityException('token is incorrect');
+    }
+
+    public function checkGrants($grants = array()) {
+        $session = Service::get('session');
+        $currentGrants = $session->getParameter('userRole');
+        if (!in_array($currentGrants, $grants)) {
+            $request = Service::get('request');
+            $returnURL = $request->getURN();
+            throw new AccessDenyException($returnURL);
+        }
     }
 
 

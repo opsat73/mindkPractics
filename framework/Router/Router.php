@@ -15,6 +15,7 @@ class Router
     private $action;
     private $arguments = array();
     private $routeParams;
+    private $grants;
 
     /**
      * construct object for routing
@@ -32,6 +33,7 @@ class Router
         $controller = null;
         $action = null;
         $rez = array();
+        $grants = null;
 
         foreach ( $this->routes as $key => $rout){
             $pattern = $this->getRegexpByRout($rout);
@@ -41,7 +43,8 @@ class Router
                 $action = $rout['action'];
                 $action = $action.'Action';
                 $this->routeParams['_name'] = $key;
-
+                if (array_key_exists('security', $rout))
+                    $grants = $rout['security'];
                 break;
             }
         }
@@ -57,6 +60,7 @@ class Router
             $this->controller = $controller;
             $this->action = $action;
             $this->arguments = $argsArray;
+            $this->grants = $grants;
     }
 
     private function getRegexpByRout($rout) {
@@ -120,4 +124,14 @@ class Router
         $rout_params = $this->routes[$route];
         return $rout_params['pattern'];
     }
+
+    /**
+     * return grants
+     * routePath() need be executed before
+     * @return array with grants
+     */
+    public function getGrants() {
+        return $this->grants;
+    }
+
 }

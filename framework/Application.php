@@ -9,12 +9,16 @@
 
 namespace Framework;
 use Framework\Controller\Controller;
+use Framework\Exception\AccessDenyException;
 use Framework\Exception\HttpNotFoundException;
 use Framework\Exception\SecurityException;
 use Framework\Renderer\Renderer;
 use Framework\Response\Response;
 use Framework\DI\Service;
+use Framework\Response\ResponseRedirect;
+use Framework\Router\Router;
 use Framework\Security\Security;
+use Framework\Session\SessionManager;
 
 class Application
 {
@@ -47,12 +51,19 @@ class Application
         $controller = $router->getController();
         $action = $router->getAction();
         $args = $router->getArgumetns();
+        $grants = $router->getGrants();
         try {
             $security = new Security();
             if (!($security->isTokenCorrect())) {
                 throw new SecurityException("bad request");
             }
-            $this->result = Controller::executeAction($controller, $action, $args);
+            $this->result = Controller::executeAction($controller, $action, $args, $grants);
+        } catch (AccessDenyException $e) {
+            $session = Service::get('session');
+            $session->addMessage('please login for doing this action', 'warning');
+            $router = Service::get('router');
+            $url = $router->getRoute('home');
+            $this->result = new ResponseRedirect($url);
         } catch (\Exception $e) {
             $argsForRendering['message'] = $e->getMessage();
             $argsForRendering['code'] = 500;
