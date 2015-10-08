@@ -145,4 +145,11 @@ abstract class ActiveRecord
         return null;
     }
 
+    public static function __callStatic($name, $arguments) {
+        if (preg_match("/findBy(.*)/", $name, $field)) {
+            $value = $arguments[1];
+            return self::findByField($field[1], $value, true);
+        }
+    }
+
 }
