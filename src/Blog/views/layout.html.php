@@ -42,6 +42,15 @@ $activeIfRoute = function ($item) use (&$route) {
                 <li <?php echo $activeIfRoute('add_post') ?>><a href="<?php echo $getRoute('add_post')?>"><?php echo _("Add Post")?></a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown"><?php echo $curLocale?><span class="caret"/></a>
+                    <ul class="dropdown-menu">
+                        <?php foreach ($avalLocale as $key=>$value) { ?>
+                            <li><a href="/change_options/location/<?php echo $key.$currentURN?>"><?php echo $key?></a></li>
+                            <li class = "divider"></li>
+                        <?php }?>
+                    </ul>
+                </li>
                 <?php if (is_null($user)) { ?>
                     <li <?php echo $activeIfRoute('signin') ?>><a href="<?php echo $getRoute('signin')?>"><?php echo _("Sign in")?></a></li>
                     <li <?php echo $activeIfRoute('login') ?>><a href="<?php echo $getRoute('login')?>"><?php echo _("Login")?></a></li>

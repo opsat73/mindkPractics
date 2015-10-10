@@ -66,6 +66,15 @@ return array(
             'id'      => '\d+',
             '_method' => 'POST'
         )
+    ),
+    'change_options' => array (
+        'pattern'     => '/change_options/location/{value}{return_url}',
+        'controller'  => 'Blog\\Controller\\ChangeOptionsController',
+        'action'      => 'setLocation',
+        '_requirements' => array (
+            'value'      => '\S{2}',
+            'return_url' => '.*'
+        )
 
     )
 );

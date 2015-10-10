@@ -13,5 +13,10 @@ return array(
     'security'    => array(
         'user_class'  => 'Blog\\Model\\User',
         'login_route' => 'login'
+    ),
+    'localization' => array(
+        'default' => 'EN',
+        'available' => array('RU' => 'ru_RU.utf8',
+                             'EN' => 'en_US.utf8')
     )
 );

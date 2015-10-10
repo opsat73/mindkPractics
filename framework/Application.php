@@ -12,7 +12,9 @@ use Framework\Controller\Controller;
 use Framework\Exception\AccessDenyException;
 use Framework\Exception\HttpNotFoundException;
 use Framework\Exception\SecurityException;
+use Framework\Localization\LocalizationManager;
 use Framework\Renderer\Renderer;
+use Framework\Request\Request;
 use Framework\Response\Response;
 use Framework\DI\Service;
 use Framework\Response\ResponseRedirect;
@@ -39,15 +41,19 @@ class Application
     /**
      * main method of application
      * this method do next steps
-     * 1) start session
+     * 1) apply localization
      * 2) parse route
      * 3) render page
      * 4) send response to browser
      */
     public function run()
     {
+        $localization = Service::get('localization');
+        $localization ->applyLocale();
+
         $router = Service::get('router');
-        $router->routePath(Service::get('request')->getURN());
+        $request = Service::get('request');
+        $router->routePath($request->getURN());
         $controller = $router->getController();
         $action = $router->getAction();
         $args = $router->getArgumetns();
@@ -78,6 +84,9 @@ class Application
             $renderer = new Renderer();
             $session = Service::get('session');
             $flush = $session->getFlush();
+            $argsForRendering['curLocale'] = $localization->getCurrentLocale();
+            $argsForRendering['avalLocale'] = $localization->getAvailableLocales();
+            $argsForRendering['currentURN'] = $request->getURN();
             $argsForRendering['content'] = $this->result->getContent();
             $argsForRendering['route'] = Service::get('router')->getRouteParams();
             $argsForRendering['user'] = Service::get('security') -> getUser();
@@ -98,5 +107,6 @@ class Application
         Service::register('router', 'Framework\Router\Router', array($this->config['routes']));
         Service::register('security', 'Framework\Security\Security');
         Service::register('session', 'Framework\Session\SessionManager');
+        Service::register('localization', 'Framework\Localization\LocalizationManager', array($this->config['localization']));
     }
 }
