@@ -65,10 +65,10 @@ class Application
             }
             $this->result = Controller::executeAction($controller, $action, $args, $grants);
         } catch (AccessDenyException $e) {
+            $request = Service::get('request');
             $session = Service::get('session');
-            $session->addMessage('please login for doing this action', 'warning');
-            $router = Service::get('router');
-            $url = $router->getRoute('home');
+            $session->setReturnURL($request->getURN());
+            $url = $router->getRoute('login');
             $this->result = new ResponseRedirect($url);
         } catch (\Exception $e) {
             $argsForRendering['message'] = $e->getMessage();

@@ -12,13 +12,32 @@ namespace Framework\Session;
 class SessionManager
 {
 
-    public $returnUrl = null;
-
     /**
      * construcn session manager and start session
      */
     public function __construct() {
         $this->startSession();
+        $this->getReturnUrl();
+    }
+
+    public $returnUrl = null;
+
+    /**
+     * @return null
+     */
+    public function getReturnUrl()
+    {
+        $this->returnUrl = $this->getParameter('returnURL');
+        return $this->returnUrl;
+    }
+
+    /**
+     * @param null $returnUrl
+     */
+    public function setReturnUrl($returnUrl)
+    {
+        $this->returnUrl = $returnUrl;
+        $this->putParameter('returnURL', $returnUrl);
     }
 
     /**
