@@ -10,10 +10,8 @@ namespace Blog\Controller;
 
 use Blog\Model\Post;
 use Framework\Controller\Controller;
-use Framework\DI\Service;
 use Framework\Exception\DatabaseException;
 use Framework\Exception\HttpNotFoundException;
-use Framework\Request\Request;
 use Framework\Response\Response;
 use Framework\Validation\Validator;
 
@@ -32,12 +30,12 @@ class PostController extends Controller
 
     public function addAction()
     {
-        if ($this->getRequest()->isPost()) {
+        if ($this->getService('request')->isPost()) {
             try{
                 $post          = new Post();
                 $date          = new \DateTime();
-                $post->title   = $this->getRequest()->post('title');
-                $post->content = trim($this->getRequest()->post('content'));
+                $post->title   = $this->getService('request')->post('title');
+                $post->content = trim($this->getService('request')->post('content'));
                 $post->date    = $date->format('Y-m-d H:i:s');
 
                 $validator = new Validator($post);
@@ -53,8 +51,8 @@ class PostController extends Controller
         }
 
         return $this->render(
-                    'add.html',
-                    array('action' => $this->generateRoute('add_post'), 'errors' => isset($error)?$error:null)
+            'add.html',
+            array('action' => $this->generateRoute('add_post'), 'errors' => isset($error)?$error:null)
         );
     }
 

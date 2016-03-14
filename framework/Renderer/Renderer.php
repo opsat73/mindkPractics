@@ -9,37 +9,40 @@
 
 namespace Framework\Renderer;
 
-use Framework\DI\Service;
+use Framework\DI\DIContainer;
 
 class Renderer
 {
     /**
      * @param $templateFile path to template file
-     * @param $params array with arguments which used in template file
+     * @param $params       array with arguments which used in template file
+     *
      * @return content
      */
-    public function render($templateFile, $params) {
+    public function render($templateFile, $params)
+    {
         $includeFunc = function ($controller, $action, $args = array()) {
             $controllerInstance = new $controller();
-            if ($args === null)
+            if ($args === null) {
                 $args = array();
-            return call_user_func_array(array($controllerInstance,$action.'Action') , $args);
+            }
+            return call_user_func_array(array($controllerInstance, $action.'Action'), $args);
         };
 
-        $getRouteFunc = function($rout) {
+        $getRouteFunc = function ($rout) {
 
-            $router = Service::get('router');
+            $router = DIContainer::get('router');
             return $router->getRoute($rout);
         };
 
-        $generateToken = function() {
-            $key = Service::get('security')->generateToken();
+        $generateToken = function () {
+            $key          = DIContainer::get('security')->generateToken();
             $outputString = '<input type = "hidden" name = "token" value = "'.$key.'">';
             echo $outputString;
         };
 
-        $params['include'] = $includeFunc;
-        $params['getRoute'] = $getRouteFunc;
+        $params['include']       = $includeFunc;
+        $params['getRoute']      = $getRouteFunc;
         $params['generateToken'] = $generateToken;
 
         ob_start();

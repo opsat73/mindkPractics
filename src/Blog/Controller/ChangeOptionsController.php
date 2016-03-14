@@ -8,14 +8,13 @@
 
 namespace Blog\Controller;
 
-
 use Framework\Controller\Controller;
-use Framework\DI\Service;
 
 class ChangeOptionsController extends Controller
 {
-    public function setLocationAction($value, $returnURL) {
-        $locatironManager = Service::get('localization');
+    public function setLocationAction($value, $returnURL)
+    {
+        $locatironManager = $this->getService('localization');
         $locatironManager->setLocale($value);
         $locatironManager->applyLocale();
         return $this->redirect($returnURL);
