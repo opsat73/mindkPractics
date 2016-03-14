@@ -40,6 +40,8 @@ $activeIfRoute = function ($item) use (&$route) {
             <ul class="nav navbar-nav">
                 <li <?php echo $activeIfRoute('home') ?>><a href="<?php echo $getRoute('home')?>"><?php echo _("Home") ?></a></li>
                 <li <?php echo $activeIfRoute('add_post') ?>><a href="<?php echo $getRoute('add_post')?>"><?php echo _("Add Post")?></a></li>
+                <li <?php echo $activeIfRoute('user_info') ?>><a href="<?php echo $getRoute('user_info')?>"><?php echo _("User Info")?></a></li>
+
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">

@@ -20,7 +20,8 @@ class PostController extends Controller
 
     public function indexAction()
     {
-        return $this->render('index.html', array('posts' => Post::find('all')));
+        $user_info = Controller::executeAction('\Blog\Controller\SecurityController', 'showInfoAction');
+        return $this->render('index.html', array('posts' => Post::find('all'), 'user_info'=> $user_info));
     }
 
     public function getPostAction($id)
