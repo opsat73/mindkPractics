@@ -9,7 +9,7 @@
 
 namespace Framework\Model;
 
-use Framework\DI\Service;
+use Framework\DI\DIContainer;
 
 abstract class ActiveRecord
 {
@@ -45,9 +45,10 @@ abstract class ActiveRecord
         $columnQueue = substr($columnQueue, 0, strlen($columnQueue)-2);
         $valueQueue = substr($valueQueue, 0, strlen($valueQueue)-2);
         $query = "replace into ".static::getTable(). "( ".$columnQueue.") values ( ".$valueQueue.")";
-        Service::get('db')->beginTransaction();
-        Service::get('db')->query($query);
-        Service::get('db')->commit();
+        $db = DIContainer::get('db');
+        $db->beginTransaction();
+        $db->query($query);
+        $db->commit();
     }
 
     /**
@@ -97,6 +98,7 @@ abstract class ActiveRecord
      * @return array result of finding with record if one and array of record needFirsOnly = false
      */
     public static function findByField($fieldName, $keyValue, $needFirstOnly = false) {
+        $db = DIContainer::get('db');
         $condition = null;
         if ($fieldName === null) {
             $condition = "where ".self::getKeyField()." = ? limit 1";
@@ -109,7 +111,7 @@ abstract class ActiveRecord
         if ($keyValue === null)
             $condition = null;
         $selectQuery = "select * from ".static::getTable()." ". $condition;
-        $statement = Service::get('db')->prepare($selectQuery);
+        $statement = $db->prepare($selectQuery);
         $result = $statement->execute(array($keyValue));
         $records = array();
         $recordsCount = 0;
@@ -131,7 +133,8 @@ abstract class ActiveRecord
      * delete recod from data base
      */
     public function delete() {
-        $statement = Service::get('db')->prepare("delete from ".static::getTable()." where id = ?");
+        $db = DiContainer::get('db');
+        $statement = $db->prepare("delete from ".static::getTable()." where id = ?");
         $key = $this->getFieldValues();
         $key = $key['id'];
         if ($key != null) {

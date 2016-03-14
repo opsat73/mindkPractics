@@ -8,19 +8,16 @@
  */
 
 namespace Framework;
+
 use Framework\Controller\Controller;
 use Framework\Exception\AccessDenyException;
 use Framework\Exception\HttpNotFoundException;
 use Framework\Exception\SecurityException;
-use Framework\Localization\LocalizationManager;
 use Framework\Renderer\Renderer;
-use Framework\Request\Request;
 use Framework\Response\Response;
-use Framework\DI\Service;
+use Framework\DI\DIContainer;
 use Framework\Response\ResponseRedirect;
-use Framework\Router\Router;
 use Framework\Security\Security;
-use Framework\Session\SessionManager;
 
 class Application
 {
@@ -30,12 +27,13 @@ class Application
 
     /**
      * this class represent main class of application
+     *
      * @param $string String path to main config of application
      */
     public function __construct($string)
     {
         $this->config = include($string);
-        $this->initApplication();
+        DIContainer::init($this->config[services]);
     }
 
     /**
@@ -48,65 +46,58 @@ class Application
      */
     public function run()
     {
-        $localization = Service::get('localization');
-        $localization ->applyLocale();
+        $localization = $this->get('localization');
+        $localization->applyLocale();
 
-        $router = Service::get('router');
-        $request = Service::get('request');
+        $router  = $this->get('router');
+        $request = $this->get('request');
         $router->routePath($request->getURN());
         $controller = $router->getController();
-        $action = $router->getAction();
-        $args = $router->getArgumetns();
-        $grants = $router->getGrants();
-        try {
+        $action     = $router->getAction();
+        $args       = $router->getArgumetns();
+        $grants     = $router->getGrants();
+        try{
             $security = new Security();
             if (!($security->isTokenCorrect())) {
                 throw new SecurityException("bad request");
             }
             $this->result = Controller::executeAction($controller, $action, $args, $grants);
-        } catch (AccessDenyException $e) {
-            $request = Service::get('request');
-            $session = Service::get('session');
+        } catch(AccessDenyException $e){
+            $request = $this->get('request');
+            $session = $this->get('session');
             $session->setReturnURL($request->getURN());
-            $url = $router->getRoute('login');
+            $url          = $router->getRoute('login');
             $this->result = new ResponseRedirect($url);
-        } catch (\Exception $e) {
+        } catch(\Exception $e){
             $argsForRendering['message'] = $e->getMessage();
-            $argsForRendering['code'] = 500;
-            if ($e instanceof HttpNotFoundException)
+            $argsForRendering['code']    = 500;
+            if ($e instanceof HttpNotFoundException) {
                 $argsForRendering['code'] = 404;
-            $renderer = new Renderer;
+            }
+            $renderer     = new Renderer;
             $this->result = new Response();
             $this->result->setContent($renderer->render($this->config['error_500'], $argsForRendering));
         }
 
         if ($this->result instanceof Response) {
-            $renderer = new Renderer();
-            $session = Service::get('session');
-            $flush = $session->getFlush();
-            $argsForRendering['curLocale'] = $localization->getCurrentLocale();
+            $renderer                       = new Renderer();
+            $session                        = $this->get('session');
+            $flush                          = $session->getFlush();
+            $argsForRendering['curLocale']  = $localization->getCurrentLocale();
             $argsForRendering['avalLocale'] = $localization->getAvailableLocales();
             $argsForRendering['currentURN'] = $request->getURN();
-            $argsForRendering['content'] = $this->result->getContent();
-            $argsForRendering['route'] = Service::get('router')->getRouteParams();
-            $argsForRendering['user'] = Service::get('security') -> getUser();
-            $argsForRendering['flush'] = $flush;
+            $argsForRendering['content']    = $this->result->getContent();
+            $argsForRendering['route']      = $this->get('router')->getRouteParams();
+            $argsForRendering['user']       = $this->get('security')->getUser();
+            $argsForRendering['flush']      = $flush;
             $session->getAndClearFlush();
             $this->result->setContent($renderer->render($this->config['main_layout'], $argsForRendering));
         }
         $this->result->send();
     }
 
-    private function initApplication() {
-        $dbCredentials = $this->config['pdo'];
-        $dns = "mysql:host=localhost;dbname=mindk;";
-
-        Service::register('request', 'Framework\Request\Request');
-        Service::register('db', '\PDO', array($dns, $dbCredentials['user'], $dbCredentials['password']));
-        Service::register('response', 'Framework\Response\Response');
-        Service::register('router', 'Framework\Router\Router', array($this->config['routes']));
-        Service::register('security', 'Framework\Security\Security');
-        Service::register('session', 'Framework\Session\SessionManager');
-        Service::register('localization', 'Framework\Localization\LocalizationManager', array($this->config['localization']));
+    private function get($service)
+    {
+        return DIContainer::get($service);
     }
 }
