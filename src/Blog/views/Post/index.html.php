@@ -12,6 +12,7 @@
         </div>
 
     <?php } ?>
+    <?php echo $user_info; ?>
 
     <div>
         <?php $include('Blog\\Controller\\PostController', 'getPost', array('id' => 'TestId')) ?>

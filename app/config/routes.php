@@ -7,6 +7,11 @@ return array(
             'controller' => 'Blog\\Controller\\PostController',
             'action'     => 'index'
         ),
+        'user_info'           => array(
+            'pattern'    => '/user_info',
+            'controller' => 'Blog\\Controller\\SecurityController',
+            'action'     => 'showInfo'
+        ),
         'testredirect'   => array(
             'pattern'    => '/test_redirect',
             'controller' => 'Blog\\Controller\\TestController',
@@ -76,7 +81,6 @@ return array(
                 'value'      => '\S{2}',
                 'return_url' => '.*'
             )
-
         )
     )
 );

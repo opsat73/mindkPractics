@@ -16,6 +16,14 @@ use Framework\Response\ResponseRedirect;
 class SecurityController extends Controller
 {
 
+    public function showInfoAction()     {
+        if ($this->getService('security')->isAuthenticated()) {
+            $user = $this->getService('security')->getUser();
+            $user = User::findByEmail($user->email);
+            return $this->render('userinfo.html', array('info' => $user));
+        }
+    }
+
     public function loginAction()
     {
         if ($this->getService('security')->isAuthenticated()) {
